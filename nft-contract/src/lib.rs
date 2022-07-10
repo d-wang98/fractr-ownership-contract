@@ -46,6 +46,10 @@ pub struct Contract {
 
     //keeps track of the metadata for the contract
     pub metadata: LazyOption<NFTContractMetadata>,
+
+    pub art_by_id: LookupMap<ArtId, Art>,
+
+    pub tokens_per_art: LookupMap<ArtId, UnorderedSet<TokenId>>,
 }
 
 /// Helper structure for keys of the persistent collections.

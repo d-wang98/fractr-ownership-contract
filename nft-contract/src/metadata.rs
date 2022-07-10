@@ -1,5 +1,6 @@
 use crate::*;
 pub type TokenId = String;
+pub type ArtId = String;
 //defines the payout type we'll be returning as a part of the royalty standards.
 #[derive(Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -18,6 +19,19 @@ pub struct NFTContractMetadata {
     pub reference: Option<String>, // URL to a JSON file with more info
     pub reference_hash: Option<Base64VecU8>, // Base64-encoded sha256 hash of JSON from reference field. Required if `reference` is included.
 }
+
+
+// NEWLY ADDED: START
+#[derive(BorshDeserialize, BorshSerialize)]
+pub struct Art {
+    pub art_title: String, // name of the artwork e.g. Mona Lisa
+    pub artist_name: String, // name of the artist
+    pub authenticator: String, // person who authenticated the artwork. 
+    // pub issued_at: u64, // date at which the artwork was issued on the fractr platform
+    pub num_shares: u64, // number of shares that have been issued
+}
+
+// NEWLY ADDED: END
 
 #[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
 #[serde(crate = "near_sdk::serde")]
@@ -45,8 +59,9 @@ pub struct Token {
     //the next approval ID to give out. 
     pub next_approval_id: u64,
     //keep track of the royalty percentages for the token in a hash map
-    pub royalty: HashMap<AccountId, u32>,
+    // pub royalty: HashMap<AccountId, u32>,
 }
+
 
 //The Json token is what will be returned from view calls. 
 #[derive(Serialize, Deserialize)]
