@@ -36,6 +36,22 @@ fn sample_token_metadata() -> TokenMetadata {
     }
 }
 
+fn sample_art_metadata() -> Art {
+    Art {
+        // pub struct Art {
+        //     pub art_title: String, // name of the artwork e.g. Mona Lisa
+        //     pub artist_name: String, // name of the artist
+        //     pub authenticator: String, // person who authenticated the artwork. 
+        //     // pub issued_at: u64, // date at which the artwork was issued on the fractr platform
+        //     pub num_shares: u64, // number of shares that have been issued
+        // }
+        art_title: "Fractr_Test_Art".to_string(),
+        artist_name: "blidddwangdw".to_string(),
+        authenticator: "dwangdwblidd".to_string(),
+        num_shares: 15u64,
+    }
+}
+
 #[test]
 #[should_panic(expected = "The contract is not initialized")]
 fn test_default() {
@@ -56,6 +72,11 @@ fn test_new_account_contract() {
 
 #[test]
 fn test_mint_nft() {
+
+    // TODO: check length of tokens minted == num of shares required
+    // TODO: check individual token information: owner_id, approved_account_ids, next_approval
+    // TODO: check art token minted
+
     let mut context = get_context(accounts(0));
     testing_env!(context.build());
     let mut contract = Contract::new_default_meta(accounts(0).into());
@@ -64,27 +85,51 @@ fn test_mint_nft() {
         .attached_deposit(MINT_STORAGE_COST)
         .predecessor_account_id(accounts(0))
         .build());
-    let token_metadata: TokenMetadata = sample_token_metadata();
-    let token_id = "0".to_string();
-    contract.nft_mint(token_id.clone(), token_metadata, accounts(0), None);
-    let contract_nft_tokens = contract.nft_tokens(Some(U128(0)), None);
-    assert_eq!(contract_nft_tokens.len(), 1);
+    // let token_metadata: TokenMetadata = sample_token_metadata();
+    // let token_id = "0".to_string();    
+    
+    contract.art_mint(
+        art_id: "0".to_string(),
+        art_title: "Fractr_Test_Art".to_string(),
+        artist_name: "blidddwangdw".to_string(),
+        authenticator: "dwangdwblidd".to_string(),
+        num_shares: 15u64,
+        minter_id: accounts(0),
+    );
 
-    assert_eq!(contract_nft_tokens[0].token_id, token_id);
-    assert_eq!(contract_nft_tokens[0].owner_id, accounts(0));
-    assert_eq!(
-        contract_nft_tokens[0].metadata.title,
-        sample_token_metadata().title
-    );
-    assert_eq!(
-        contract_nft_tokens[0].metadata.description,
-        sample_token_metadata().description
-    );
-    assert_eq!(
-        contract_nft_tokens[0].metadata.media,
-        sample_token_metadata().media
-    );
-    assert_eq!(contract_nft_tokens[0].approved_account_ids, HashMap::new());
+    // check that the artwork data is properly stored in the map
+    art_by_id.contains_key("0".to_string());
+
+    // check that 15 shares were properly minted and stored
+    let contract_nft_tokens = contract.nft_tokens(Some(U128(0)), None);
+    asset_eq!(contract_nft_tokens.len(), sample_art_metadata().num_shares);
+    
+    // check data in each token is as expected
+    for i in 1 .. sample_art_metadata().num_shares {
+
+        let token = 
+
+        assert_eq!(contract_nft_tokens)
+        assert_eq!(contract_nft_tokens[i].owner_id, accounts(0));
+    }
+    
+    // assert_eq!(contract_nft_tokens.len(), 1);
+
+    // assert_eq!(contract_nft_tokens[0].token_id, token_id);
+    // assert_eq!(contract_nft_tokens[0].owner_id, accounts(0));
+    // assert_eq!(
+    //     contract_nft_tokens[0].metadata.title,
+    //     sample_token_metadata().title
+    // );
+    // assert_eq!(
+    //     contract_nft_tokens[0].metadata.description,
+    //     sample_token_metadata().description
+    // );
+    // assert_eq!(
+    //     contract_nft_tokens[0].metadata.media,
+    //     sample_token_metadata().media
+    // );
+    // assert_eq!(contract_nft_tokens[0].approved_account_ids, HashMap::new());
 }
 
 #[test]

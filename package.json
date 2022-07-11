@@ -15,6 +15,7 @@
         "test:integration:rs": "cd integration-tests/rs && cargo run --example integration-tests"
     },
     "dependencies": {
+        "near-cli": "^3.4.0",
         "yarn": "^1.22.19"
     }
 }

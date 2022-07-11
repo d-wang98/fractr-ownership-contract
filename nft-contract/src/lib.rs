@@ -63,6 +63,8 @@ pub enum StorageKey {
     TokensPerType,
     TokensPerTypeInner { token_type_hash: CryptoHash },
     TokenTypesLocked,
+    ArtById,
+    TokensPerArt,
 }
 
 #[near_bindgen]
@@ -110,6 +112,8 @@ impl Contract {
                 StorageKey::NFTContractMetadata.try_to_vec().unwrap(),
                 Some(&metadata),
             ),
+            art_by_id: LookupMap::new(StorageKey::ArtById.try_to_vec().unwrap()),
+            tokens_per_art: LookupMap::new(StorageKey::TokensPerArt.try_to_vec().unwrap()),
         };
 
         //return the Contract object

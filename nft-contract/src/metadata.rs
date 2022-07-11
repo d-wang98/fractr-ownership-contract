@@ -59,7 +59,7 @@ pub struct Token {
     //the next approval ID to give out. 
     pub next_approval_id: u64,
     //keep track of the royalty percentages for the token in a hash map
-    // pub royalty: HashMap<AccountId, u32>,
+    pub royalty: HashMap<AccountId, u32>,
 }
 
 
