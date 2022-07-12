@@ -22,7 +22,8 @@ pub struct NFTContractMetadata {
 
 
 // NEWLY ADDED: START
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, Serialize, Deserialize)]
+#[serde(crate = "near_sdk::serde")]
 pub struct Art {
     pub art_title: String, // name of the artwork e.g. Mona Lisa
     pub artist_name: String, // name of the artist

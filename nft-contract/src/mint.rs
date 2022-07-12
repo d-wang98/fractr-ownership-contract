@@ -39,7 +39,7 @@ impl Contract {
         let mut temp_set: UnorderedSet<TokenId> = UnorderedSet::new(b"s"); 
         
         // mint num_share tokens
-        for i in 1..num_shares {
+        for i in 0..num_shares {
 
             let token = Token {
                 //set the owner ID equal to the receiver ID passed into the function

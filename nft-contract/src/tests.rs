@@ -3,10 +3,13 @@
 use crate::Contract;
 use crate::TokenMetadata;
 use crate::approval::NonFungibleTokenCore;
+use crate::metadata::Art;
 use near_sdk::json_types::{U128, U64};
 use near_sdk::test_utils::{accounts, VMContextBuilder};
 use near_sdk::testing_env;
 use near_sdk::{env, AccountId};
+
+// use serde::{Serialize, Deserialize};
 
 use std::collections::HashMap;
 
@@ -71,6 +74,7 @@ fn test_new_account_contract() {
 }
 
 #[test]
+// #[derive(Debug)]
 fn test_mint_nft() {
 
     // TODO: check length of tokens minted == num of shares required
@@ -89,47 +93,44 @@ fn test_mint_nft() {
     // let token_id = "0".to_string();    
     
     contract.art_mint(
-        art_id: "0".to_string(),
-        art_title: "Fractr_Test_Art".to_string(),
-        artist_name: "blidddwangdw".to_string(),
-        authenticator: "dwangdwblidd".to_string(),
-        num_shares: 15u64,
-        minter_id: accounts(0),
+        "0".to_string(),
+        // art_id: art_id_temp,
+        "Fractr_Test_Art".to_string(),
+        "blidddwangdw".to_string(),
+        "dwangdwblidd".to_string(),
+        15u64,
+        accounts(0),
     );
 
     // check that the artwork data is properly stored in the map
-    art_by_id.contains_key("0".to_string());
+    assert!(contract.art_by_id.contains_key(&"0".to_string()));
 
     // check that 15 shares were properly minted and stored
     let contract_nft_tokens = contract.nft_tokens(Some(U128(0)), None);
-    asset_eq!(contract_nft_tokens.len(), sample_art_metadata().num_shares);
+    assert_eq!(contract_nft_tokens.len(), sample_art_metadata().num_shares as usize);
     
     // check data in each token is as expected
-    for i in 1 .. sample_art_metadata().num_shares {
+    for tok in contract_nft_tokens {
 
-        let token = 
-
-        assert_eq!(contract_nft_tokens)
-        assert_eq!(contract_nft_tokens[i].owner_id, accounts(0));
+        // println!("{}", tok.token_id);
+        // let curr_token_id = art_id.clone().to_string() + &curr_id.to_string();
+        
+        assert_eq!(tok.owner_id, accounts(0));
+        assert_eq!(tok.approved_account_ids, Default::default());
+        // assert_eq!(tok.next_approval_id, 0);
     }
-    
-    // assert_eq!(contract_nft_tokens.len(), 1);
 
-    // assert_eq!(contract_nft_tokens[0].token_id, token_id);
-    // assert_eq!(contract_nft_tokens[0].owner_id, accounts(0));
-    // assert_eq!(
-    //     contract_nft_tokens[0].metadata.title,
-    //     sample_token_metadata().title
-    // );
-    // assert_eq!(
-    //     contract_nft_tokens[0].metadata.description,
-    //     sample_token_metadata().description
-    // );
-    // assert_eq!(
-    //     contract_nft_tokens[0].metadata.media,
-    //     sample_token_metadata().media
-    // );
-    // assert_eq!(contract_nft_tokens[0].approved_account_ids, HashMap::new());
+    // check that each token is correctly stored in tokens_per_owner
+    assert_eq!(
+        contract.tokens_per_owner.get(&accounts(0)).unwrap().len(),
+        sample_art_metadata().num_shares
+    );  
+
+    // check that each token is mapped to the correct art id in art_by_id
+    assert_eq!(
+        contract.tokens_per_art.get(&"0".to_string()).unwrap().len(), 
+        sample_art_metadata().num_shares
+    );
 }
 
 #[test]
